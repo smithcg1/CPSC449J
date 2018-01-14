@@ -11,8 +11,22 @@ public class MinPenaltyFinder {
 		
 		String fileName = "/Users/USER/Desktop/CPSC449Input.txt";	//Input file location and name
 		FileParser.ReadFile(fileName, inputData);
-		testArray(inputData); 										//Loads file into variables
+		//testArray(inputData); 										//Loads file into variables
+		
+		
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	static void testArray(dataArray inputData){
