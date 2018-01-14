@@ -20,26 +20,8 @@ public class MinPenaltyFinder {
 			FileReader fileReader = new FileReader(fileName);			//Open file for reading
 			BufferedReader reader = new BufferedReader(fileReader);		//Buffer file
 			
-			while ((line = reader.readLine()) != null){					//Read next line and escape if end of file
-				if (line.equals("forced partial assignment:")){
-					while (!(line = reader.readLine()).isEmpty()){		//If next line is not empty
-						inputData.machinePenalties[charToIndex(line.charAt(1))-1][charToIndex(line.charAt(3))] = 11; //Load values into array
-					}
-				}
-				
-				if (line.equals("forbidden machine:")){
-					while (!(line = reader.readLine()).isEmpty()){		//If next line is not empty
-						inputData.machinePenalties[charToIndex(line.charAt(1))-1][charToIndex(line.charAt(3))] = -1; //Load values into array
-					}
-				}
-				
-				if (line.equals("too-near tasks:")){
-					while (!(line = reader.readLine()).isEmpty()){		//If next line is not empty
-						int [] tnt = {charToIndex(line.charAt(1))-1,charToIndex(line.charAt(3))};
-						inputData.tooNearTasks.add(tnt);	
-					}
-				}
-				
+			//Read file once to fill matrix with base penalties
+			while ((line = reader.readLine()) != null){
 				if (line.equals("machine penalties:")){
 					
 					for(int j=0 ; j <= 7; j++){
@@ -61,11 +43,53 @@ public class MinPenaltyFinder {
 						System.exit(0);
 					}
 				}
+			}
+			
+			fileReader = new FileReader(fileName);
+			reader = new BufferedReader(fileReader);
+			//Read file second time to replace forbidden and and forced assignments
+			while ((line = reader.readLine()) != null){					//Read next line and escape if end of file
+				
+				//System.out.print("test");
+				
+				if (line.equals("forced partial assignment:")){
+					while (!(line = reader.readLine()).isEmpty()){		//If next line is not empty	
+						int machIndex = charToIndex(line.charAt(1))-1;
+						int taskIndex = charToIndex(line.charAt(3));
+						
+						int forcedPAValue = inputData.machinePenalties[machIndex][taskIndex]+10;	//10-19 indicates forced assignment
+						
+						//Disable relevant machine and task assignments
+						for (int i=0; i <= 7; i++){
+							inputData.machinePenalties[machIndex][i] = -1;
+						}
+						for (int j=0; j <= 7; j++){
+							inputData.machinePenalties[j][taskIndex] = -1;
+						}
+						
+						inputData.machinePenalties[machIndex][taskIndex] = forcedPAValue; //Force assignment
+					}
+				}
+				
+				if (line.equals("forbidden machine:")){
+					while (!(line = reader.readLine()).isEmpty()){		//If next line is not empty
+						inputData.machinePenalties[charToIndex(line.charAt(1))-1][charToIndex(line.charAt(3))] = -1; //Load values into array
+					}
+				}
+				
+				if (line.equals("too-near tasks:")){
+					while (!(line = reader.readLine()).isEmpty()){		//If next line is not empty
+						int [] tnt = {charToIndex(line.charAt(1))-1,charToIndex(line.charAt(3))};
+						inputData.tooNearTasks.add(tnt);	
+					}
+				}
 				
 				if (line.equals("too-near penalities:")){
-					while (line = reader.readLine() == null || !(line.isEmpty())){		//If next line is not empty
-						int [] tnp = {charToIndex(line.charAt(1))-1,charToIndex(line.charAt(3)), charToIndex(line.charAt(5))}; //ONLY READS ONE CHAR, NEED TO FIX
-						inputData.tooNearTasks.add(tnp);	
+					line = reader.readLine();
+					while (line != null && !(line.isEmpty())){		//If next line is not empty
+						int [] tnp = {charToIndex(line.charAt(1))-1, charToIndex(line.charAt(3)), charToIndex(line.charAt(5))}; //ONLY READS ONE CHAR, NEED TO FIX
+						inputData.tooNearTasks.add(tnp);
+						line = reader.readLine();
 					}
 				}
 			}
@@ -77,11 +101,18 @@ public class MinPenaltyFinder {
 			System.out.print("File not found");
 		}	
 		
+		//For testing
 		System.out.println("Condensed Content:");
 		for(int j=0 ; j <= 7; j++){
 			for(int i=0 ; i <= 7; i++){
-				System.out.print(inputData.machinePenalties[j][i]+":");
+				if(0 <= inputData.machinePenalties[j][i] && inputData.machinePenalties[j][i] <= 9){
+					System.out.print(" " + inputData.machinePenalties[j][i]+":");
+				}
+				else{
+					System.out.print(inputData.machinePenalties[j][i]+":");
+				}
 			}
+			System.out.println("");
 		}
 		
 	}	
