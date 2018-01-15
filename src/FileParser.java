@@ -41,39 +41,51 @@ public class FileParser {
 				//Read file second time to replace forbidden and and forced assignments
 				while ((line = reader.readLine()) != null){					//Read next line and escape if end of file
 					
-					//System.out.print("test");
-					
 					if (line.equals("forced partial assignment:")){
-						while (!(line = reader.readLine()).isEmpty()){		//If next line is not empty	
-							int machIndex = charToIndex(line.charAt(1))-1;
-							int taskIndex = charToIndex(line.charAt(3));
+						line = reader.readLine();
+						while (line != null && !(line.isEmpty())){		//If next line is not empty	
+							int [] fpa = {charToIndex(line.charAt(1))-1, charToIndex(line.charAt(3))};
+							inputData.forcedPairs.add(fpa);
 							
-							int forcedPAValue = inputData.machinePenalties[machIndex][taskIndex]+10;	//10-19 indicates forced assignment
-							
-							//Disable relevant machine and task assignments
-							for (int i=0; i <= 7; i++){
-								inputData.machinePenalties[machIndex][i] = -1;
-							}
-							for (int j=0; j <= 7; j++){
-								inputData.machinePenalties[j][taskIndex] = -1;
-							}
-							
-							inputData.machinePenalties[machIndex][taskIndex] = forcedPAValue; //Force assignment
+							//***May be able to delete from here***
+                            int machIndex = charToIndex(line.charAt(1))-1;
+                            int taskIndex = charToIndex(line.charAt(3));
+                            
+                            int forcedPAValue = inputData.machinePenalties[machIndex][taskIndex]+10;    //10-19 indicates forced assignment
+                            
+                            //Disable relevant machine and task assignments
+                            for (int i=0; i <= 7; i++){
+                                inputData.machinePenalties[machIndex][i] = -1;
+                            }
+                            for (int j=0; j <= 7; j++){
+                                inputData.machinePenalties[j][taskIndex] = -1;
+                            }
+                            
+                            inputData.machinePenalties[machIndex][taskIndex] = forcedPAValue; //Force assignment
+                            //***To here***
+                            
+							line = reader.readLine();
 						}
 					}
 					
+					
 					if (line.equals("forbidden machine:")){
-						while (!(line = reader.readLine()).isEmpty()){		//If next line is not empty
+						line = reader.readLine();
+						while (line != null && !(line.isEmpty())){		//If next line is not empty
 							inputData.machinePenalties[charToIndex(line.charAt(1))-1][charToIndex(line.charAt(3))] = -1; //Load values into array
+							line = reader.readLine();
 						}
 					}
 					
 					if (line.equals("too-near tasks:")){
-						while (!(line = reader.readLine()).isEmpty()){		//If next line is not empty
+						line = reader.readLine();
+						while (line != null && !(line.isEmpty())){		//If next line is not empty
 							int [] tnt = {charToIndex(line.charAt(1))-1,charToIndex(line.charAt(3))};
 							inputData.tooNearTasks.add(tnt);	
+							line = reader.readLine();
 						}
 					}
+					
 					
 					if (line.equals("too-near penalities:")){
 						line = reader.readLine();
@@ -84,7 +96,7 @@ public class FileParser {
 						}
 					}
 				}
-				
+
 				fileReader.close();											//Close input file
 			}
 			
