@@ -10,6 +10,10 @@ public class MinPenaltyFinder {
 		dataArray inputData = new dataArray();
 		Node currentNode = null;
 		
+		int[] bestAssignment = new int[8];								//Stores the current best machine task assignment
+		int lowestPenalty = 1000;												//Stores the lowest penalty found in tree (1000 is test value to see if nothing is found)
+		
+		
 		String fileName = "//C:/Users/USER/Desktop/CPSC449Input.txt";		//Input file location and name
 		//String fileName = "//C:/Users/smithcg/Desktop/CPSC449Input.txt";	//Input file location at school
 		FileParser.ReadFile(fileName, inputData);
@@ -56,10 +60,11 @@ public class MinPenaltyFinder {
 				int newMachine = currentNode.remainingMachines[0];		//Set the next machine to assign to as the 0th index
 				
 				while(currentNode.remainingUnassignedTasks.length!=0){			//For every remaining unassigned task
+					int newTask = currentNode.remainingUnassignedTasks[0];
 					//System.out.println("Lenght of remaing tasks: " + currentNode.remainingTasks.length);
 					//System.out.println("Lenght of remaing machines: " + currentNode.remainingMachines.length);
 					System.out.println("New Machine: " + newMachine + "    Task:" + currentNode.remainingUnassignedTasks[0]);
-					Node node = new Node(currentNode, newMachine, currentNode.remainingUnassignedTasks[0], penalty[newMachine][0]);	//Create a new node which links to this one
+					Node node = new Node(currentNode, newMachine, newTask, penalty[newMachine][newTask]);	//Create a new node which links to this one
 					//System.out.println("Machine: " + currentNode.machine + " has child machine: " + currentNode.children.get(0).machine);
 				}
 				
@@ -75,7 +80,16 @@ public class MinPenaltyFinder {
 						//System.out.println("New node has: " + currentNode.remainingMachines.length + " remaining machines to test");
 					}
 				}
+				
+				//Check if best solution
+				if(currentNode.remainingMachines.length==0){			//If no machines are left, it must be a leaf
+					if(currentNode.accumulatedPenalty < lowestPenalty){
+						bestAssignment = currentNode.currentPath;		//Assign best path
+						lowestPenalty = currentNode.accumulatedPenalty;	//Assign lowest penalty
+					}
+				}
 			}
+		
 			
 			//Climb one layer
 			if(currentNode.parent!=null){								//Guard against null pointer of master node
@@ -91,6 +105,7 @@ public class MinPenaltyFinder {
 				}
 			}
 			
+			//Close node if children are closed
 			if(currentNode.children.size()==0){
 				currentNode.open = false;
 			}
@@ -100,11 +115,13 @@ public class MinPenaltyFinder {
 		
 		
 		//Result
-		System.out.print("Solution" + " Quality:");
+		System.out.print("Solution: ");
+		for(int i=0 ; i < bestAssignment.length; i++){System.out.print(" " + bestAssignment[i] + " ");}
+		System.out.print(" Quality: " + lowestPenalty);
 	}
 	
 	
-	
+	//2+2+9+0+2+3+6+2
 	
 	
 	

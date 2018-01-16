@@ -4,8 +4,9 @@ public class Node {
 	boolean open = true;
 	boolean isMaster = false;
 	
-	int nodePenalty = 0;
-	int accumulatedPenalty = 0;
+	int nodePenalty = 0;										//Records this nodes penalty (may not be needed)
+	int accumulatedPenalty = 0;									//Records total penalty including this node
+	int[] currentPath = new int[8];								//Records task assignments up to and including this node
 	
 	Node parent = null;
 	ArrayList<Node> children = new ArrayList<Node>();
@@ -18,7 +19,7 @@ public class Node {
 	int task;
 
 	Node(int assignedMachine, int assignedTask, int penalty){	//Overload for Master Node
-		isMaster = true;					//Set master
+		isMaster = true;										//Set master
 		
 		machine = assignedMachine;
 		task = assignedTask;
@@ -29,6 +30,7 @@ public class Node {
 		remainingUnassignedTasks = remainingTasks;
 		
 		nodePenalty = penalty;
+		currentPath[assignedMachine] = assignedTask;			//Adds task to task path
 	}
 	
 	
@@ -47,8 +49,13 @@ public class Node {
 		//for(int i=0 ; i < remainingTasks.length; i++){System.out.print(remainingTasks[i]);}
 		//System.out.println();
 		
+		System.out.println("new penalty: " + penalty);
 		nodePenalty = penalty;
-		accumulatedPenalty = parent.accumulatedPenalty + penalty;
+		accumulatedPenalty = parent.accumulatedPenalty + nodePenalty;
+		System.out.println("accumulatedPenalty: " + accumulatedPenalty);
+		
+		currentPath = parent.currentPath;												//Inherit parent task path
+		currentPath[assignedMachine] = assignedTask;									//Add this node to task path
 	}
 	
 	//Executed in the parent when a child is created
