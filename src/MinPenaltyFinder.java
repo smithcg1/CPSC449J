@@ -10,7 +10,8 @@ public class MinPenaltyFinder {
 		dataArray inputData = new dataArray();
 		Node currentNode = null;
 		
-		String fileName = "/Users/USER/Desktop/CPSC449Input.txt";		//Input file location and name
+		String fileName = "//C:/Users/USER/Desktop/CPSC449Input.txt";		//Input file location and name
+		//String fileName = "//C:/Users/smithcg/Desktop/CPSC449Input.txt";	//Input file location at school
 		FileParser.ReadFile(fileName, inputData);
 		testArray(inputData); 										//Loads file into variables
 		
@@ -28,13 +29,15 @@ public class MinPenaltyFinder {
 			Node masterNode = new Node(firstForcedMach, firstForcedTask, penalty[firstForcedMach][firstForcedTask]);
 			
 			currentNode = masterNode;
+			currentNode.remainingUnassignedTasks = new int[1];			//Prevent other children from being created
+			
 			inputData.forcedPairs.remove(0);							//Remove pair to prevent duplication
 			
 			for(int j=0; j < inputData.forcedPairs.size(); j++){		//If there are more forced, add them, NEED TO CHECK FOR FORBIDDENS
 				int[] assignedPair = inputData.forcedPairs.get(j);
 				System.out.println("New Machine: " + assignedPair[0] + "    Task:" + assignedPair[1]);
 				Node node = new Node(currentNode, assignedPair[0], assignedPair[1], penalty[assignedPair[0]][assignedPair[1]]);
-				currentNode = node;
+				currentNode = node;										//Dig down to new node
 			}
 		}
 		
@@ -42,19 +45,21 @@ public class MinPenaltyFinder {
 		else{
 			Node masterNode = new Node(0, 0, penalty[0][0]);
 			currentNode = masterNode;
+			currentNode.remainingUnassignedTasks = new int[0];		//Prevent other children from being created
 		}
 		
 
 		//Create remaining tree
 		//Create branches of current machine
 		while(!(currentNode.isMaster && !currentNode.open)){			//Until node is master and master has been closed
-			while(currentNode.remainingMachines.length != 0){			//Check if all possible branches have been created from current node
+			while(currentNode.remainingMachines.length != 0 && currentNode.remainingUnassignedTasks.length!=0){	//Check if all possible branches have been created from current node (no machines remain)
 				int newMachine = currentNode.remainingMachines[0];		//Set the next machine to assign to as the 0th index
-				for(int newTaskIndex=0; newTaskIndex < currentNode.remainingTasks.length ;newTaskIndex++){	//For ever remaining unassigned task
+				
+				while(currentNode.remainingUnassignedTasks.length!=0){			//For every remaining unassigned task
 					//System.out.println("Lenght of remaing tasks: " + currentNode.remainingTasks.length);
 					//System.out.println("Lenght of remaing machines: " + currentNode.remainingMachines.length);
-					System.out.println("New Machine: " + newMachine + "    Task:" + currentNode.remainingTasks[newTaskIndex]);
-					Node node = new Node(currentNode, newMachine, currentNode.remainingTasks[newTaskIndex], penalty[newMachine][newTaskIndex]);	//Create a new node which links to this one
+					System.out.println("New Machine: " + newMachine + "    Task:" + currentNode.remainingUnassignedTasks[0]);
+					Node node = new Node(currentNode, newMachine, currentNode.remainingUnassignedTasks[0], penalty[newMachine][0]);	//Create a new node which links to this one
 					//System.out.println("Machine: " + currentNode.machine + " has child machine: " + currentNode.children.get(0).machine);
 				}
 				
@@ -65,15 +70,30 @@ public class MinPenaltyFinder {
 					if(currentNode.children.get(createdNodeIndex).open && !skip){  									//If child is open and the first found
 						currentNode = currentNode.children.get(createdNodeIndex);									//Set child node as active
 						skip = true;																				//Skip all remaining nodes
-						System.out.println("Current Node changed to: " + currentNode.machine + "-" + currentNode.task);
-						System.out.println("New node has: " + currentNode.remainingMachines.length + " remaining machines to test");
+						System.out.println("Current Node dug down to: " + currentNode.machine + "-" + currentNode.task);
+						//System.out.println("Current Node changed to: " + currentNode.machine + "-" + currentNode.task);
+						//System.out.println("New node has: " + currentNode.remainingMachines.length + " remaining machines to test");
 					}
 				}
 			}
-			currentNode.open = false;								//Once you hit the bottom
-			currentNode = currentNode.parent;						//Close branch and climb one level
-			System.out.println("Current Node moved up to: " + currentNode.machine + "-" + currentNode.task);
-			System.out.println("Remaining machines: " + currentNode.remainingMachines[0]);
+			
+			//Climb one layer
+			if(currentNode.parent!=null){								//Guard against null pointer of master node
+				//currentNode.open = false;								//Once you hit the bottom
+				currentNode.parent.children.remove(currentNode);		//Remove child node from checks
+				currentNode = currentNode.parent;						//Close branch and climb one level
+				System.out.println("Current Node moved up to: " + currentNode.machine + "-" + currentNode.task);
+				//System.out.println("Remaining machines to test: " + currentNode.remainingMachines.length);
+			
+				if(currentNode.children.size()!=0){						//If there are any remaining children
+					currentNode = currentNode.children.get(0);			//Dig down to first child
+					System.out.println("Current Node dug down to: " + currentNode.machine + "-" + currentNode.task);
+				}
+			}
+			
+			if(currentNode.children.size()==0){
+				currentNode.open = false;
+			}
 		}
 		
 		
