@@ -10,7 +10,8 @@ public class MinPenaltyFinder {
 		dataArray inputData = new dataArray();
 		Node currentNode = null;
 		
-		String fileName = "/Users/USER/Desktop/CPSC449Input.txt";		//Input file location and name
+		//String fileName = "/Users/USERS/Desktop/CPSC449Input.txt";		//Input file location and name
+		String fileName = "//C:/Users/smithcg/Desktop/CPSC449Input.txt";	//Input file location at school
 		FileParser.ReadFile(fileName, inputData);
 		testArray(inputData); 										//Loads file into variables
 		
@@ -48,13 +49,13 @@ public class MinPenaltyFinder {
 		//Create remaining tree
 		//Create branches of current machine
 		while(!(currentNode.isMaster && !currentNode.open)){			//Until node is master and master has been closed
-			while(currentNode.remainingMachines.length != 0){			//Check if all possible branches have been created from current node
+			while(currentNode.remainingMachines.length != 0){			//Check if all possible branches have been created from current node (no machines remain)
 				int newMachine = currentNode.remainingMachines[0];		//Set the next machine to assign to as the 0th index
-				for(int newTaskIndex=0; newTaskIndex < currentNode.remainingTasks.length ;newTaskIndex++){	//For ever remaining unassigned task
+				while(currentNode.remainingUnassignedTasks.length!=0){			//For every remaining unassigned task
 					//System.out.println("Lenght of remaing tasks: " + currentNode.remainingTasks.length);
 					//System.out.println("Lenght of remaing machines: " + currentNode.remainingMachines.length);
-					System.out.println("New Machine: " + newMachine + "    Task:" + currentNode.remainingTasks[newTaskIndex]);
-					Node node = new Node(currentNode, newMachine, currentNode.remainingTasks[newTaskIndex], penalty[newMachine][newTaskIndex]);	//Create a new node which links to this one
+					System.out.println("New Machine: " + newMachine + "    Task:" + currentNode.remainingUnassignedTasks[0]);
+					Node node = new Node(currentNode, newMachine, currentNode.remainingUnassignedTasks[0], penalty[newMachine][0]);	//Create a new node which links to this one
 					//System.out.println("Machine: " + currentNode.machine + " has child machine: " + currentNode.children.get(0).machine);
 				}
 				
@@ -70,6 +71,7 @@ public class MinPenaltyFinder {
 					}
 				}
 			}
+			
 			currentNode.open = false;								//Once you hit the bottom
 			currentNode = currentNode.parent;						//Close branch and climb one level
 			System.out.println("Current Node moved up to: " + currentNode.machine + "-" + currentNode.task);

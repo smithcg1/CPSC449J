@@ -12,6 +12,7 @@ public class Node {
 	
 	int[] remainingMachines = new int[8];
 	int[] remainingTasks = new int[8];
+	int[] remainingUnassignedTasks = new int[8];
 	
 	int machine;
 	int task;
@@ -25,6 +26,7 @@ public class Node {
 		int[] options = {0,1,2,3,4,5,6,7};
 		remainingMachines = removeElement(options, assignedMachine);
 		remainingTasks = removeElement(options, assignedTask);		
+		remainingUnassignedTasks = remainingTasks;
 		
 		nodePenalty = penalty;
 	}
@@ -39,7 +41,8 @@ public class Node {
 		
 		remainingMachines = removeElement(parent.remainingMachines, assignedMachine);	//Remove this machine from available machines
 		remainingTasks = removeElement(parent.remainingTasks, assignedTask);			//Remove this task from available machines
-
+		remainingUnassignedTasks = remainingTasks;
+		
 		//System.out.print("remainingTasks: ");
 		//for(int i=0 ; i < remainingTasks.length; i++){System.out.print(remainingTasks[i]);}
 		//System.out.println();
@@ -55,7 +58,7 @@ public class Node {
 		//System.out.println("child creation is the problem");
 		//if(parent!=null){System.out.println("Trigrered on parent: " + parent.machine + "    Child: " + this.machine);}
 		
-		if(parent!=null){this.remainingMachines = removeElement(this.remainingMachines, child.machine);}	//Remove this machine from parent search			
+		this.remainingUnassignedTasks = removeElement(this.remainingUnassignedTasks, child.task);	//Remove this machine from parent search			
 	}
 	
 	//Removes one element
