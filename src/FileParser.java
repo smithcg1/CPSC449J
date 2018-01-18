@@ -51,7 +51,7 @@ public class FileParser {
                             int machIndex = charToIndex(line.charAt(1))-1;
                             int taskIndex = charToIndex(line.charAt(3));
                             
-                            int forcedPAValue = inputData.machinePenalties[machIndex][taskIndex]+10;    //10-19 indicates forced assignment
+                            int forcedPAValue = inputData.machinePenalties[machIndex][taskIndex];    //10-19 indicates forced assignment
                             
                             //Disable relevant machine and task assignments
                             for (int i=0; i <= 7; i++){

@@ -13,7 +13,7 @@ public class Node {
 	int task = -1;
 
 	
-	//Undefined node used for master
+	//Unconstructed node used for master
 	Node(){	}	
 	
 	
@@ -29,11 +29,12 @@ public class Node {
 		accumulatedPenalty = parent.accumulatedPenalty + nodePenalty;		
 	}
 	
+	
 	//Executed in the parent when a child is created
 	public void addChildNode(Node child){
 		children.add(child);					//Add child parent relationship
-		System.out.println("Parent:" + this.machine + "  was just given child: " + child.machine);
-		System.out.println("Parent:" + this.machine + "  now has # of children: " + this.children.size());
+		//System.out.println("Parent:" + this.machine + "  was just given child: " + child.machine);
+		//System.out.println("Parent:" + this.machine + "  now has # of children: " + this.children.size());
 		
 	}
 }
