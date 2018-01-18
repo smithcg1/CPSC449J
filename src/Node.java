@@ -3,8 +3,8 @@ import java.util.ArrayList;
 public class Node {
 	boolean open = true;
 	
-	int nodePenalty = 0;										//Records this nodes penalty (may not be needed)
-	int accumulatedPenalty = 0;									//Records total penalty including this node
+	int nodePenalty = 0;										
+	int accumulatedPenalty = 0;									
 	
 	Node parent = null;
 	ArrayList<Node> children = new ArrayList<Node>();

@@ -1,0 +1,27 @@
+Name:
+Test1
+
+forced partial assignment:
+(1,A)
+(2,B)
+
+forbidden machine:
+(2,H)
+
+too-near tasks:
+(A,F)
+(E,F)
+
+machine penalties:
+28952452
+62496879
+22143870
+42342102
+74809246
+12153079
+32065792
+81230872
+
+too-near penalities:
+(B,C,10)
+(A,D,7)

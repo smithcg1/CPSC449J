@@ -8,6 +8,11 @@ public class MinPenaltyFinder {
 	static int[] taskAssignments = new int[8];							//Order of task assignment from machine 1-8
 	
 	public static void main(String[] args) {	
+		ArrayList<int[]> forcedPairs = new ArrayList<int[]>(); 		//Contains pairs that must be made
+		int[][] machinePenalties = new int[8][8];					//All penalties and forced/forbidden pairs, [mach][task]
+		int[][] taskProximity = new int[8][8];						//All penalties and forced/forbidden pairs, [mach][task]
+
+		
 		dataArray inputData = new dataArray();
 		Node currentNode = null;
 		
@@ -19,7 +24,7 @@ public class MinPenaltyFinder {
 		
 		ArrayList<Integer> currentPath = new ArrayList<Integer>(Arrays.asList(-1,-1,-1,-1,-1,-1,-1,-1));		//Records task assignments up to and including this node
 		
-		String fileName = "//C:/Users/USER/Desktop/CPSC449Input.txt";	//Input file location and name
+		String fileName = "//C:/Users/USER/Desktop/CPSC 449 Java/CPSC449Input.txt";	//Input file location and name
 		FileParser.ReadFile(fileName, inputData);
 		testArray(inputData); 											//Loads file into variables
 				
@@ -54,7 +59,7 @@ public class MinPenaltyFinder {
 					for(int task=0; task < remainingTasks.size(); task++)		//For each unassigned task
 					{
 						Node node = new Node(currentNode, nextMachine, remainingTasks.get(task), inputData.machinePenalties[nextMachine][remainingTasks.get(task)]);	//Create a new node which links to this node
-						System.out.println("Node machine: " + node.machine + "  Index: " + node.task + "   created");
+						//System.out.println("Node machine: " + node.machine + "  Index: " + node.task + "   created");
 					}
 				
 					currentNode.open = false;									//Close node so it won't make new nodes again
@@ -67,7 +72,7 @@ public class MinPenaltyFinder {
 				currentPath.set(currentNode.machine, currentNode.task);	
 			}
 			
-			//Should always now be in a leaf
+			//Should always now be in a leaf at this point
 			
 			//Check if best solution
 			if(currentNode.accumulatedPenalty < lowestPenalty){
@@ -75,20 +80,18 @@ public class MinPenaltyFinder {
 				for(Integer i : currentPath){bestAssignment.add(new Integer(i));}	//Record new best path
 				lowestPenalty = currentNode.accumulatedPenalty;						//Remember lowest penalty
 			}
-
-			System.out.println("Children Size: " +currentNode.children.size()+ "  Parent status: " +(currentNode.parent != null));
 			
-			//Start climbing up
+			//Start climbing up until a parent with child is found
 			while(currentNode.children.size() == 0 && currentNode.parent != null)	//Until there is a child to climb down to
 			{	
-				currentNode.parent.children.remove(currentNode);	//Remove child node from parents
+				currentNode.parent.children.remove(currentNode);					//Remove child node from parents
 				
-				remainingMachines.add(currentNode.machine);			//Re-add machine and task to available list and removes from path
+				remainingMachines.add(currentNode.machine);							//Re-add machine and task to available list and removes from path
 				remainingTasks.add(currentNode.task);
 				currentPath.set(currentNode.machine, -1);
 				
-				currentNode = currentNode.parent;					//Climb up 
-				System.out.println("Climbed up to machine: " +currentNode.machine+ "  task: " +currentNode.task);
+				currentNode = currentNode.parent;									//Climb up 
+				//System.out.println("Climbed up to machine: " +currentNode.machine+ "  task: " +currentNode.task);
 			}
 
 			
